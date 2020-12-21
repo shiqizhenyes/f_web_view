@@ -23,7 +23,6 @@ public class SwiftFWebViewPlugin: NSObject, FlutterPlugin, FWebViewCreatedDelega
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("zack call method " + call.method)
         if call.method == "getPlatformVersion" {
             result("iOS " + UIDevice.current.systemVersion)
         } else if call.method == "loadUrl" {
