@@ -52,10 +52,10 @@ class _FWebViewState extends State<FWebView> {
         viewType: viewType,
         onPlatformViewCreated: (id) {
           widget.viewCreateCallBack("success", id);
-          FWebView._channel.invokeMethod("loadUrl", {"url" : widget.url});
           if (widget.enableJavaScript) {
             FWebView._channel.invokeMethod("enableJavaScript");
           }
+          FWebView._channel.invokeMethod("loadUrl", {"url" : widget.url});
           print("$_tag  $id");
         },
       );
@@ -64,6 +64,10 @@ class _FWebViewState extends State<FWebView> {
         viewType: viewType,
         onPlatformViewCreated: (id) {
           widget.viewCreateCallBack("success", id);
+          if(widget.enableJavaScript) {
+            FWebView._channel.invokeMethod("enableJavaScript");
+          }
+          FWebView._channel.invokeMethod("loadUrl", {"url" : widget.url});
         },
       );
     } else {
