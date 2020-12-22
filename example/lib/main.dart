@@ -50,12 +50,14 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  String _title = "Plugin example app";
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: Text(_title),
         ),
         body: Center(
           child: Column(
@@ -68,6 +70,11 @@ class _MyAppState extends State<MyApp> {
                   viewCreateCallBack: (result, id) {
                     setState(() {
                       initPlatformState();
+                    });
+                  },
+                  onReceivedTitle: (title) {
+                    setState(() {
+                      _title = title;
                     });
                   },
                 ),

@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
 /** FWebViewPlugin */
-class FWebViewPlugin : FlutterPlugin, MethodCallHandler {
+class FWebViewPlugin : FlutterPlugin, MethodCallHandler, FWebViewCallback {
 
     private val tag = FWebViewPlugin::class.simpleName
 
@@ -30,7 +30,7 @@ class FWebViewPlugin : FlutterPlugin, MethodCallHandler {
                 this@FWebViewPlugin.fWebView = fWebView
                 Log.d(tag, "FWebViewFactory onCreate")
             }
-        })
+        }, this)
         flutterPluginBinding.platformViewRegistry.registerViewFactory(viewTypeId, fWebViewFactory)
     }
 
@@ -53,6 +53,22 @@ class FWebViewPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-//        channel.setMethodCallHandler(null)
+        channel.setMethodCallHandler(null)
+    }
+
+    override fun onReceivedTitle(title: String?) {
+        channel.invokeMethod("onReceivedTitle", title)
+    }
+
+    override fun onPageStarted(url: String?) {
+        channel.invokeMethod("onPageStarted", url)
+    }
+
+    override fun onPageFinished(url: String?) {
+        channel.invokeMethod("onPageFinished", url)
+    }
+
+    override fun onProgressChanged(process: Int) {
+        channel.invokeMethod("onProgressChanged", process)
     }
 }
