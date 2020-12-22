@@ -56,7 +56,6 @@ class _FWebViewState extends State<FWebView> {
     super.initState();
     FWebView._channel.setMethodCallHandler((call) async {
       if(call.method == "onReceivedTitle") {
-        print(call);
         widget.onReceivedTitle(call.arguments);
       } else if (call.method == "onPageStarted") {
         widget.onPageStarted(call.arguments);

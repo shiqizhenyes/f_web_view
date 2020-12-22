@@ -1,3 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="me.nice.f_web_view">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="me.nice.f_web_view">
+
+    <application
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m" />
+
 </manifest>

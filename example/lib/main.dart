@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   String _title = "Plugin example app";
+  String _tag = "FWebView example main";
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +66,7 @@ class _MyAppState extends State<MyApp> {
               Text("platformVersion $_platformVersion"),
               Expanded(
                 child: FWebView(
-                  url: "https://m.bilibili.com",
+                  url: "https://www.bing.com",
                   enableJavaScript: true,
                   viewCreateCallBack: (result, id) {
                     setState(() {
@@ -76,6 +77,15 @@ class _MyAppState extends State<MyApp> {
                     setState(() {
                       _title = title;
                     });
+                  },
+                  onPageStarted: (url) {
+                    print("$_tag onPageStarted $url");
+                  },
+                  onProgressChanged: (progress) {
+                    print("$_tag onProgressChanged $progress");
+                  },
+                  onPageFinished: (url) {
+                    print("$_tag onPageFinished $url");
                   },
                 ),
               ),

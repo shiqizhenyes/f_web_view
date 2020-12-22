@@ -1,10 +1,15 @@
 package me.nice.f_web_view
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
 import io.flutter.plugin.platform.PlatformView
 
 
@@ -13,10 +18,13 @@ open class FWebView(context: Context?, private val callback: FWebViewCallback, i
     private var webView: WebView ?= WebView(context)
     private var webViewClient: WebViewClient
     private var webChromeClient: WebChromeClient
-    
+    private val httpPrefix = "http"
+    private val httpsPrefix = "https"
+
     init {
         webView?.id = id
         webViewClient = object : WebViewClient() {
+
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 callback.onPageStarted(url)
@@ -25,6 +33,18 @@ open class FWebView(context: Context?, private val callback: FWebViewCallback, i
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 callback.onPageFinished(url)
+            }
+
+            @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val url = request?.url.toString()
+                return if (url.startsWith(httpsPrefix) || url.startsWith(httpPrefix)) {
+                    view?.loadUrl(request?.url?.toString())
+                    false
+                } else {
+                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    false
+                }
             }
         }
         webView?.webViewClient = webViewClient
@@ -62,5 +82,5 @@ open class FWebView(context: Context?, private val callback: FWebViewCallback, i
     fun enableJavaScript() {
         true.also { webView?.settings?.javaScriptEnabled = it }
     }
-    
+
 }
