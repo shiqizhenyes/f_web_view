@@ -15,57 +15,63 @@ import io.flutter.plugin.platform.PlatformView
 
 open class FWebView(context: Context?, private val callback: FWebViewCallback, id: Int): PlatformView {
 
-    private var webView: WebView ?= WebView(context)
-    private var webViewClient: WebViewClient
-    private var webChromeClient: WebChromeClient
+    private var webView: WebView ? = null
+    private lateinit var webViewClient: WebViewClient
+    private lateinit var webChromeClient: WebChromeClient
     private val httpPrefix = "http"
     private val httpsPrefix = "https"
 
     init {
-        webView?.id = id
-        webViewClient = object : WebViewClient() {
+        context?.let { ct ->
+            webView = WebView(ct)
+            webView?.id = id
+            webViewClient = object : WebViewClient() {
 
-            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                super.onPageStarted(view, url, favicon)
-                callback.onPageStarted(url)
-            }
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                    super.onPageStarted(view, url, favicon)
+                    callback.onPageStarted(url)
+                }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                callback.onPageFinished(url)
-            }
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    callback.onPageFinished(url)
+                }
 
-            @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                val url = request?.url.toString()
-                return if (url.startsWith(httpsPrefix) || url.startsWith(httpPrefix)) {
-                    view?.loadUrl(request?.url?.toString())
-                    false
-                } else {
-                    context?.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                    false
+                @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                    request?.let { rq ->
+                        val url = rq.url.toString()
+                        return if (url.startsWith(httpsPrefix) || url.startsWith(httpPrefix)) {
+                            view?.loadUrl(rq.url.toString())
+                            false
+                        } else {
+                            ct.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            false
+                        }
+                    }
+                    return false
                 }
             }
+            webView?.webViewClient = webViewClient
+            webChromeClient = object : WebChromeClient() {
+
+                override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                    super.onProgressChanged(view, newProgress)
+                    callback.onProgressChanged(newProgress)
+                }
+
+                override fun onReceivedIcon(view: WebView?, icon: Bitmap?) {
+                    super.onReceivedIcon(view, icon)
+                }
+
+                override fun onReceivedTitle(view: WebView?, title: String?) {
+                    super.onReceivedTitle(view, title)
+                    callback.onReceivedTitle(title)
+                }
+
+            }
+            webView?.webChromeClient = webChromeClient
         }
-        webView?.webViewClient = webViewClient
-        webChromeClient = object : WebChromeClient() {
-
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                super.onProgressChanged(view, newProgress)
-                callback.onProgressChanged(newProgress)
-            }
-
-            override fun onReceivedIcon(view: WebView?, icon: Bitmap?) {
-                super.onReceivedIcon(view, icon)
-            }
-
-            override fun onReceivedTitle(view: WebView?, title: String?) {
-                super.onReceivedTitle(view, title)
-                callback.onReceivedTitle(title)
-            }
-
-        }
-        webView?.webChromeClient = webChromeClient
     }
     
     override fun getView(): WebView? = webView
@@ -76,7 +82,9 @@ open class FWebView(context: Context?, private val callback: FWebViewCallback, i
     }
 
     fun loadUrl(url: String?) {
-        webView?.loadUrl(url)
+        url?.let { 
+            webView?.loadUrl(it)
+        }
     }
 
     fun enableJavaScript() {
