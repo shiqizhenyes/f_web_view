@@ -1,8 +1,7 @@
 name: f_web_view
 description: A new Flutter web view plugin.
-version: 0.0.1
-author:
-homepage:
+version: 0.0.2
+homepage: https://github.com/shiqizhenyes/f_web_view
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

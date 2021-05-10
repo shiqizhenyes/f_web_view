@@ -1,3 +1,7 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* 初始化提交
+
+## 0.0.2
+
+* 适配kotlin 1.4 空安全
